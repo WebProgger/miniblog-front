@@ -39,18 +39,33 @@ export default {
     state: {
         postsStatus: "",
         posts: [],
+        pagePosts: 1,
+        toPosts: 0,
+        totalPosts: 0,
 
         myPostsStatus: "",
         myPosts: [],
+        pageMyPosts: 1,
+        toMyPosts: 0,
+        totalMyPosts: 0,
 
         anyPostsStatus: "",
         anyPosts: [],
+        pageAnyPosts: 1,
+        toAnyPosts: 0,
+        totalAnyPosts: 0,
 
         likedPostsStatus: "",
         likedPosts: [],
+        pageLikedPosts: 1,
+        toLikedPosts: 0,
+        totalLikedPosts: 0,
 
         followedPostsStatus: "",
         followedPosts: [],
+        pageFollowedPosts: 1,
+        toFollowedPosts: 0,
+        totalFollowedPosts: 0,
 
         postStatus: "",
         post: {
@@ -80,18 +95,26 @@ export default {
         isPostsLoading: state => state.postsStatus === STATUS_LOADING,
         isNotPosts: state => state.posts.length < 1,
         getPosts: state => state.posts,
+        getToPosts: state => state.toPosts,
+        getTotalPosts: state => state.totalPosts,
 
         isMyPostsLoading: state => state.myPostsStatus === STATUS_LOADING,
         isNotMyPosts: state => state.myPosts.length < 1,
         getMyPosts: state => state.myPosts,
+        getToMyPosts: state => state.toMyPosts,
+        getTotalMyPosts: state => state.totalMyPosts,
 
         isAnyPostsLoading: state => state.anyPostsStatus === STATUS_LOADING,
         isNotAnyPosts: state => state.anyPosts.length < 1,
         getAnyPosts: state => state.anyPosts,
+        getToAnyPosts: state => state.toAnyPosts,
+        getTotalAnyPosts: state => state.totalAnyPosts,
 
         isLikedPostsLoading: state => state.likedPostsStatus === STATUS_LOADING,
         isNotLikedPosts: state => state.likedPosts.length < 1,
         getLikedPosts: state => state.likedPosts,
+        getToLikedPosts: state => state.toLikedPosts,
+        getTotalLikedPosts: state => state.totalLikedPosts,
 
         isPostLoading: state => state.postStatus === STATUS_LOADING,
         getPost: state => state.post,
@@ -99,6 +122,8 @@ export default {
         isFollowedPostsLoading: state => state.followedPostsStatus === STATUS_LOADING,
         isNotFollowedPosts: state => state.followedPosts.length < 1,
         getFollowedPosts: state => state.followedPosts,
+        getToFollowedPosts: state => state.toFollowedPosts,
+        getTotalFollowedPosts: state => state.totalFollowedPosts,
     },
     mutations: {
         [GET_MY_POSTS_REQUEST]: (state) => {
@@ -106,7 +131,11 @@ export default {
         },
         [GET_MY_POSTS_SUCCESS]: (state, resp) => {
             state.myPostsStatus = STATUS_SUCCESS;
-            state.myPosts = resp.data;
+            resp.data.forEach(el => {
+                state.myPosts.push(el)
+            });
+            state.toMyPosts = resp.to;
+            state.totalMyPosts = resp.total;
         },
         [GET_MY_POSTS_ERROR]: (state) => {
             state.myPostsStatus = STATUS_ERROR;
@@ -118,7 +147,11 @@ export default {
         },
         [GET_ANY_POSTS_SUCCESS]: (state, resp) => {
             state.anyPostsStatus = STATUS_SUCCESS;
-            state.anyPosts = resp.data;
+            resp.data.forEach(el => {
+                state.anyPosts.push(el)
+            });
+            state.toAnyPosts = resp.to;
+            state.totalAnyPosts = resp.total;
         },
         [GET_ANY_POSTS_ERROR]: (state) => {
             state.anyPostsStatus = STATUS_ERROR;
@@ -130,7 +163,11 @@ export default {
         },
         [GET_LIKED_POSTS_SUCCESS]: (state, resp) => {
             state.likedPostsStatus = STATUS_SUCCESS;
-            state.likedPosts = resp.data;
+            resp.data.forEach(el => {
+                state.likedPosts.push(el)
+            });
+            state.toLikedPosts = resp.to;
+            state.totalLikedPosts = resp.total;
         },
         [GET_LIKED_POSTS_ERROR]: (state) => {
             state.likedPostsStatus = STATUS_ERROR;
@@ -142,7 +179,11 @@ export default {
         },
         [GET_FOLLOWED_POSTS_SUCCESS]: (state, resp) => {
             state.followedPostsStatus = STATUS_SUCCESS;
-            state.followedPosts = resp.data;
+            resp.data.forEach(el => {
+                state.followedPosts.push(el)
+            });
+            state.toFollowedPosts = resp.to;
+            state.totalFollowedPosts = resp.total;
         },
         [GET_FOLLOWED_POSTS_ERROR]: (state) => {
             state.followedPostsStatus = STATUS_ERROR;
@@ -154,7 +195,11 @@ export default {
         },
         [GET_POSTS_SUCCESS]: (state, resp) => {
             state.postsStatus = STATUS_SUCCESS;
-            state.posts = resp.data;
+            resp.data.forEach(el => {
+                state.posts.push(el);
+            });
+            state.toPosts = resp.to;
+            state.totalPosts = resp.total;
         },
         [GET_POSTS_ERROR]: (state) => {
             state.postsStatus = STATUS_ERROR;
@@ -224,10 +269,10 @@ export default {
         },
     },
     actions: {
-        [GET_MY_POSTS_REQUEST]: ({ commit }, payload) => {
+        [GET_MY_POSTS_REQUEST]: ({ state, commit }, payload) => {
             return new Promise((resolve, reject) => {
                 commit(GET_MY_POSTS_REQUEST);
-                postService().getMyPosts(payload).then(resp => {
+                postService().getMyPosts(state.pageMyPosts, payload).then(resp => {
                     commit(GET_MY_POSTS_SUCCESS, resp.data);
                     resolve(resp);
                 }).catch(err => {
@@ -237,10 +282,10 @@ export default {
             });
         },
 
-        [GET_ANY_POSTS_REQUEST]: ({ commit }, payload) => {
+        [GET_ANY_POSTS_REQUEST]: ({ state, commit }, payload) => {
             return new Promise((resolve, reject) => {
                 commit(GET_ANY_POSTS_REQUEST);
-                postService().getAnyPosts(payload).then(resp => {
+                postService().getAnyPosts(state.pageAnyPosts, payload).then(resp => {
                     commit(GET_ANY_POSTS_SUCCESS, resp.data);
                     resolve(resp);
                 }).catch(err => {
@@ -250,10 +295,10 @@ export default {
             });
         },
 
-        [GET_LIKED_POSTS_REQUEST]: ({ commit }, payload) => {
+        [GET_LIKED_POSTS_REQUEST]: ({ state, commit }, payload) => {
             return new Promise((resolve, reject) => {
                 commit(GET_LIKED_POSTS_REQUEST);
-                postService().getLikedPosts(payload).then(resp => {
+                postService().getLikedPosts(state.pageLikedPosts, payload).then(resp => {
                     commit(GET_LIKED_POSTS_SUCCESS, resp.data);
                     resolve(resp);
                 }).catch(err => {
@@ -263,10 +308,10 @@ export default {
             });
         },
 
-        [GET_FOLLOWED_POSTS_REQUEST]: ({ commit }, payload) => {
+        [GET_FOLLOWED_POSTS_REQUEST]: ({ state, commit }, payload) => {
             return new Promise((resolve, reject) => {
                 commit(GET_FOLLOWED_POSTS_REQUEST);
-                postService().getFollowedPosts(payload).then(resp => {
+                postService().getFollowedPosts(state.pageFollowedPosts, payload).then(resp => {
                     commit(GET_FOLLOWED_POSTS_SUCCESS, resp.data);
                     resolve(resp);
                 }).catch(err => {
@@ -276,10 +321,10 @@ export default {
             });
         },
 
-        [GET_POSTS_REQUEST]: ({ commit }) => {
+        [GET_POSTS_REQUEST]: ({ state, commit }) => {
             return new Promise((resolve, reject) => {
                 commit(GET_POSTS_REQUEST);
-                postService().getPosts().then(resp => {
+                postService().getPosts(state.pagePosts).then(resp => {
                     commit(GET_POSTS_SUCCESS, resp.data);
                     resolve(resp);
                 }).catch(err => {

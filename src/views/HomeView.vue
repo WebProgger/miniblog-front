@@ -4,7 +4,7 @@
     <the-layout>
       <the-tabs v-if="!isAuth" :items="noAuthItems">
         <template v-slot:0>
-          <post-list>
+          <post-list type="posts" :to="toPosts" :total="totalPosts">
             <post-item
                 v-for="post in posts"
                 :key="post.id"
@@ -26,7 +26,7 @@
           >Создать пост</v-btn>
         </template>
         <template v-slot:0>
-          <post-list>
+          <post-list type="anyPosts" :to="toAnyPosts" :total="totalAnyPosts">
             <post-item
                 v-for="post in anyPosts"
                 :key="post.id"
@@ -38,7 +38,7 @@
           </v-sheet>
         </template>
         <template v-slot:1>
-          <post-list>
+          <post-list type="myPosts" :to="toMyPosts" :total="totalMyPosts">
             <post-item
                 v-for="post in myPosts"
                 :key="post.id"
@@ -58,7 +58,7 @@
           </v-sheet>
         </template>
         <template v-slot:2>
-          <post-list>
+          <post-list type="followedPosts" :to="toFollowedPosts" :total="totalFollowedPosts">
             <post-item
                 v-for="post in followedPosts"
                 :key="post.id"
@@ -92,6 +92,28 @@ import {websocketHook} from "@/hooks/websocket.hook";
 
 export default {
   name: "home-view",
+  computed: {
+    ...mapGetters({
+      isAuth: 'isAuthenticated',
+      isNotPosts: 'isNotPosts',
+      posts: 'getPosts',
+      anyPosts: 'getAnyPosts',
+      isNotAnyPosts: 'isNotAnyPosts',
+      isNotMyPosts: 'isNotMyPosts',
+      myPosts: 'getMyPosts',
+      followedPosts: 'getFollowedPosts',
+      isNotFollowedPosts: 'isNotFollowedPosts',
+
+      toPosts: 'getToPosts',
+      totalPosts: 'getTotalPosts',
+      toAnyPosts: 'getToAnyPosts',
+      totalAnyPosts: 'getTotalAnyPosts',
+      toMyPosts: 'getToMyPosts',
+      totalMyPosts: 'getTotalMyPosts',
+      toFollowedPosts: 'getToFollowedPosts',
+      totalFollowedPosts: 'getTotalFollowedPosts',
+    })
+  },
   components: {
     TheTabs,
     PostList,
@@ -108,19 +130,6 @@ export default {
         {id: 2, name: 'Подписки'},
       ],
     }
-  },
-  computed: {
-    ...mapGetters({
-      isAuth: 'isAuthenticated',
-      isNotPosts: 'isNotPosts',
-      posts: 'getPosts',
-      anyPosts: 'getAnyPosts',
-      isNotAnyPosts: 'isNotAnyPosts',
-      isNotMyPosts: 'isNotMyPosts',
-      myPosts: 'getMyPosts',
-      followedPosts: 'getFollowedPosts',
-      isNotFollowedPosts: 'isNotFollowedPosts',
-    })
   },
   methods: {
     openCreateModal: function() {

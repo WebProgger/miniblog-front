@@ -30,11 +30,11 @@
           </v-col>
         </v-sheet>
 
-        <the-loader v-if="!!isMyPostLoading || isLikedPostsLoading" />
 
-        <the-tabs v-else-if="!this.$route.params.id" :items="items">
+
+        <the-tabs v-if="!this.$route.params.id" :items="items">
           <template v-slot:0>
-            <post-list>
+            <post-list type="myPosts" :to="toMyPosts" :total="totalMyPosts">
               <post-item
                   v-for="post in myPosts"
                   :key="post.id"
@@ -54,7 +54,7 @@
             </post-list>
           </template>
           <template v-slot:1>
-            <post-list>
+            <post-list type="likedPosts" :to="toLikedPosts" :total="totalLikedPosts">
               <post-item
                   v-for="post in likedPosts"
                   :key="post.id"
@@ -81,7 +81,7 @@
             </post-list>
           </template>
           <template v-slot:1>
-            <post-list>
+            <post-list type="likedPosts" :to="toLikedPosts" :total="totalLikedPosts">
               <post-item
                   v-for="post in likedPosts"
                   :key="post.id"
@@ -158,6 +158,11 @@ export default {
       likedPosts: 'getLikedPosts',
       isNotLikedPosts: 'isNotLikedPosts',
       isLikedPostsLoading: 'isLikedPostsLoading',
+
+      toMyPosts: 'getToMyPosts',
+      totalMyPosts: 'getTotalMyPosts',
+      toLikedPosts: 'getToLikedPosts',
+      totalLikedPosts: 'getTotalLikedPosts',
     })
   },
   methods: {

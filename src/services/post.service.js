@@ -3,32 +3,32 @@ import { httpHook } from "@/hooks/http.hook";
 export const postService = () => {
     const { httpGet, httpPost, httpPatch, httpDelete } = httpHook();
 
-    const getMyPosts = (id) => {
-        return httpGet(`/posts?author=${id}`).then((response) => {
+    const getMyPosts = (page, id) => {
+        return httpGet(`/posts?page=${page}&author=${id}`).then((response) => {
             return response;
         });
     }
 
-    const getAnyPosts = (id) => {
-        return httpGet(`/posts?page=1&no_author=${id}`).then((response) => {
+    const getAnyPosts = (page, id) => {
+        return httpGet(`/posts?page=${page}&no_author=${id}`).then((response) => {
             return response;
         });
     }
 
-    const getLikedPosts = (id) => {
-        return httpGet(`/posts?liked=${id}`).then((response) => {
+    const getLikedPosts = (page, id) => {
+        return httpGet(`/posts?page=${page}&liked=${id}`).then((response) => {
             return response;
         });
     }
 
-    const getFollowedPosts = (id) => {
-        return httpGet(`/posts?followed=${id}`).then((response) => {
+    const getFollowedPosts = (page, id) => {
+        return httpGet(`/posts?page=${page}&followed=${id}`).then((response) => {
             return response;
         });
     }
 
-    const getPosts = () => {
-        return httpGet(`/posts`).then((response) => {
+    const getPosts = (page) => {
+        return httpGet(`/posts?page=${page}`).then((response) => {
             return response;
         });
     }
